@@ -1,7 +1,6 @@
 dist: focal
 arch: 
   - ppc64le
-  - amd64
 
 language: go
 
@@ -10,6 +9,7 @@ services:
   
 before_install:
   - go get github.com/onsi/ginkgo/ginkgo
+  - docker pull docker.io/docker/dockerfile:1.0.0-experimental
 
 go:
   - "1.13.x"
