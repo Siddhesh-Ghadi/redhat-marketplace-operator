@@ -10,6 +10,9 @@ services:
 before_install:
   - go get github.com/onsi/ginkgo/ginkgo
   - docker pull docker.io/docker/dockerfile:1.0.0-experimental
+  - docker pull docker.io/docker/dockerfile:experimental
+  - docker pull docker.io/docker/dockerfile-copy:v0.1.9
+  
 
 go:
   - "1.13.x"
@@ -22,8 +25,8 @@ jobs:
     - stage: test
       script: 
               - docker --version
-              - docker build -t "public-image-registry.apps-crc.testing/symposium/redhat-marketplace-operator:1.0.4" -f build/Dockerfile .
               - docker build --build-arg ARCH=ppc64le -t "quay.io/rh-marketplace/golang-base:1.15" -f build/base.Dockerfile .
+              - docker build -t "public-image-registry.apps-crc.testing/symposium/redhat-marketplace-operator:1.0.4" -f build/Dockerfile .
               - docker build -t "public-image-registry.apps-crc.testing/symposium/redhat-marketplace-metric-state:1.0.4" -f build/metricState.Dockerfile .
               - docker build -t "public-image-registry.apps-crc.testing/symposium/redhat-marketplace-reporter:1.0.4" -f build/reporter.Dockerfile .
               - docker build -t "public-image-registry.apps-crc.testing/symposium/redhat-marketplace-authcheck:1.0.4" -f build/authcheck.Dockerfile .
