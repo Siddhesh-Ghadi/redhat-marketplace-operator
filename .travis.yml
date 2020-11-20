@@ -1,5 +1,6 @@
 dist: focal
-#arch: ppc64le
+arch: 
+  - ppc64le
 
 language: go
 
@@ -10,7 +11,7 @@ before_install:
   - go install github.com/onsi/ginkgo/ginkgo
   - docker pull docker.io/docker/dockerfile:experimental
   - docker pull docker.io/docker/dockerfile-copy:v0.1.9
-  
+  - VERSION=`go run scripts/version/main.go last`
 
 go:
   - "1.13.x"
@@ -20,13 +21,24 @@ env:
 
 jobs:
   include:
-    - stage: test
+    - stage: building PPC64LE images
+      arch: ppc64le
       script: 
               - docker --version
-#              - docker build --build-arg ARCH=ppc64le -t "quay.io/rh-marketplace/golang-base:1.15" -f build/base.Dockerfile .
-#              - docker build -t "public-image-registry.apps-crc.testing/symposium/redhat-marketplace-operator:1.0.4" -f build/Dockerfile .
-#              - docker build -t "public-image-registry.apps-crc.testing/symposium/redhat-marketplace-metric-state:1.0.4" -f build/metricState.Dockerfile .
-#              - docker build -t "public-image-registry.apps-crc.testing/symposium/redhat-marketplace-reporter:1.0.4" -f build/reporter.Dockerfile .
-#              - docker build -t "public-image-registry.apps-crc.testing/symposium/redhat-marketplace-authcheck:1.0.4" -f build/authcheck.Dockerfile .
-              
-              - make test-ci-unit
+              - if [ "x$VERSION" = "x" ]; then VERSION=1.0.5; fi
+              - echo "Marketplace operator version : ${VERSION}"
+              - echo "Login to Quay.io docker account..."
+              - docker login -u="${ROBOT_USER_NAME}" -p="${ROBOT_PASS_PHRASE}" quay.io
+              - echo "Building the Redhat marketplace operator images..."
+              - docker build --build-arg ARCH=ppc64le -t "quay.io/rh-marketplace/golang-base:1.15-ppc64le" -f build/base.Dockerfile .
+              - docker build -t "quay.io/kandarpamalipeddi/rhmoperator/redhat-marketplace-operator:${VERSION}-ppc64le" -f build/Dockerfile .
+              - docker build -t "quay.io/kandarpamalipeddi/rhmoperator/redhat-marketplace-metric-state:${VERSION}-ppc64le" -f build/metricState.Dockerfile .
+              - docker build -t "quay.io/kandarpamalipeddi/rhmoperator/redhat-marketplace-reporter:${VERSION}-ppc64le" -f build/reporter.Dockerfile .
+              - docker build -t "quay.io/kandarpamalipeddi/rhmoperator/redhat-marketplace-authcheck:${VERSION}-ppc64le" -f build/authcheck.Dockerfile .
+              - echo "Pushing images ..."
+              - docker push "quay.io/kandarpamalipeddi/rhmoperator/redhat-marketplace-operator:${VERSION}-ppc64le"
+              - docker push "quay.io/kandarpamalipeddi/rhmoperator/redhat-marketplace-metric-state:${VERSION}-ppc64le"
+              - docker push "quay.io/kandarpamalipeddi/rhmoperator/redhat-marketplace-reporter:${VERSION}-ppc64le"
+              - docker push "quay.io/kandarpamalipeddi/rhmoperator/redhat-marketplace-authcheck:${VERSION}-ppc64le"
+              - echo "Docker Image push to quay.io is done !"
+#              - make test-ci-unit
