@@ -1,6 +1,5 @@
 dist: focal
-arch: 
-  - amd64
+#arch: ppc64le
 
 language: go
 
