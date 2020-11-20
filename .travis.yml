@@ -26,6 +26,7 @@ jobs:
       script: 
               - docker --version
               - if [ "x$VERSION" = "x" ]; then VERSION=1.0.5; fi
+              - echo $VERSION
               - echo "Marketplace operator version : ${VERSION}"
               - echo "Login to Quay.io docker account..."
               - docker login -u="${ROBOT_USER_NAME}" -p="${ROBOT_PASS_PHRASE}" quay.io
