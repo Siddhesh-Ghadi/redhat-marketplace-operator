@@ -9,7 +9,6 @@ services:
   
 before_install:
   - go get github.com/onsi/ginkgo/ginkgo
-  - docker pull docker.io/docker/dockerfile:1.0.0-experimental
   - docker pull docker.io/docker/dockerfile:experimental
   - docker pull docker.io/docker/dockerfile-copy:v0.1.9
   
