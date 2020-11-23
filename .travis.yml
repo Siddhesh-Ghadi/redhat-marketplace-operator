@@ -36,4 +36,4 @@ script:
   - docker push "quay.io/kandarpamalipeddi/redhat-marketplace-reporter:${VERSION}-ppc64le"
   - docker push "quay.io/kandarpamalipeddi/redhat-marketplace-authcheck:${VERSION}-ppc64le"
   - echo "Docker Image push to quay.io is done !"
-  #- make test-ci-unit
+  - travis_wait 30 make test-ci-unit
