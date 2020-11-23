@@ -7,10 +7,10 @@ services:
   - docker
   
 before_install:
-  - go install github.com/onsi/ginkgo/ginkgo
-  - docker pull docker.io/docker/dockerfile:experimental
-  - docker pull docker.io/docker/dockerfile-copy:v0.1.9
-  - VERSION=`go run scripts/version/main.go last`
+  - go get github.com/onsi/ginkgo/ginkgo
+  #- docker pull docker.io/docker/dockerfile:experimental
+  #- docker pull docker.io/docker/dockerfile-copy:v0.1.9
+  #- VERSION=`go run scripts/version/main.go last`
 
 go:
   - "1.13.x"
@@ -19,22 +19,22 @@ env:
   - IMAGE_REGISTRY=quay.io/rh-marketplace DOCKER_CLI_EXPERIMENTAL=enabled DOCKER_BUILDKIT=1
   
 script:
-  - docker --version
-  - if [ "x$VERSION" = "x" ]; then VERSION=1.0.4; fi
-  - echo  ${VERSION}
-  - echo "Login to Quay.io docker account..."
-  - docker login -u="${ROBOT_USER_NAME}" -p="${ROBOT_PASS_PHRASE}" quay.io
-  - echo "Building the Redhat marketplace operator images..."
-  - docker build --build-arg ARCH=ppc64le -t "quay.io/rh-marketplace/golang-base:1.15" -f build/base.Dockerfile .
-  - docker build -t "quay.io/kandarpamalipeddi/redhat-marketplace-operator:${VERSION}-ppc64le" -f build/Dockerfile .
-  - docker build -t "quay.io/kandarpamalipeddi/redhat-marketplace-metric-state:${VERSION}-ppc64le" -f build/metricState.Dockerfile .
-  - docker build -t "quay.io/kandarpamalipeddi/redhat-marketplace-reporter:${VERSION}-ppc64le" -f build/reporter.Dockerfile .
-  - docker build -t "quay.io/kandarpamalipeddi/redhat-marketplace-authcheck:${VERSION}-ppc64le" -f build/authcheck.Dockerfile .
-  - echo "Pushing images ..."
-  - docker push "quay.io/kandarpamalipeddi/redhat-marketplace-operator:${VERSION}-ppc64le"
-  - docker push "quay.io/kandarpamalipeddi/redhat-marketplace-metric-state:${VERSION}-ppc64le"
-  - docker push "quay.io/kandarpamalipeddi/redhat-marketplace-reporter:${VERSION}-ppc64le"
-  - docker push "quay.io/kandarpamalipeddi/redhat-marketplace-authcheck:${VERSION}-ppc64le"
-  - echo "Docker Image push to quay.io is done !"
-  - travis_wait 30 sleep 3600 &
+  #- docker --version
+  #- if [ "x$VERSION" = "x" ]; then VERSION=1.0.4; fi
+  #- echo  ${VERSION}
+  #- echo "Login to Quay.io docker account..."
+  #- docker login -u="${ROBOT_USER_NAME}" -p="${ROBOT_PASS_PHRASE}" quay.io
+  #- echo "Building the Redhat marketplace operator images..."
+  #- docker build --build-arg ARCH=ppc64le -t "quay.io/rh-marketplace/golang-base:1.15" -f build/base.Dockerfile .
+  #- docker build -t "quay.io/kandarpamalipeddi/redhat-marketplace-operator:${VERSION}-ppc64le" -f build/Dockerfile .
+  #- docker build -t "quay.io/kandarpamalipeddi/redhat-marketplace-metric-state:${VERSION}-ppc64le" -f build/metricState.Dockerfile .
+  #- docker build -t "quay.io/kandarpamalipeddi/redhat-marketplace-reporter:${VERSION}-ppc64le" -f build/reporter.Dockerfile .
+  #- docker build -t "quay.io/kandarpamalipeddi/redhat-marketplace-authcheck:${VERSION}-ppc64le" -f build/authcheck.Dockerfile .
+  #- echo "Pushing images ..."
+  #- docker push "quay.io/kandarpamalipeddi/redhat-marketplace-operator:${VERSION}-ppc64le"
+  #- docker push "quay.io/kandarpamalipeddi/redhat-marketplace-metric-state:${VERSION}-ppc64le"
+  #- docker push "quay.io/kandarpamalipeddi/redhat-marketplace-reporter:${VERSION}-ppc64le"
+  #- docker push "quay.io/kandarpamalipeddi/redhat-marketplace-authcheck:${VERSION}-ppc64le"
+  #- echo "Docker Image push to quay.io is done !"
+  #- travis_wait 30 sleep 3600 &
   - make test-ci-unit
